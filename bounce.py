@@ -16,6 +16,7 @@ That includes the classes Ball, Paddle, Brick, and BrickWall.
 """
  
 import pygame
+import random
 
 from ball import Ball
 from platforms import *
@@ -44,25 +45,39 @@ ball = Ball(screen,5,x,y)
 
 group = PlatformGroup(screen)
 
-Vx = 1
-dt = 30
+Vx = 5
+dt = 15
 Vy = 0
 g = 0.5
 
 x -= 5
 y += 5
 
+x = round(x + Vx*dt)
+y = round(y + g*dt*dt/2)
+
+Vy = Vy + g*dt
+
 for i in range(len(notes)):
 
     dt = notes[i]
 
+    min_impact = g*dt/Vy
+
+    if min_impact > 1:
+        min_impact = 1
+
+    mult = random.uniform(0.75, 0.8)
+
+    impact = min_impact*mult
+
+    group.add(50, 5, x - 25, y, impact)
+
     x = round(x + Vx*dt)
-    y = round(y + (-Vy*0.8)*dt + g*dt*dt/2)
+    y = round(y + (-Vy*impact)*dt + g*dt*dt/2)
 
-    Vy = (-Vy*0.8) + g*dt
+    Vy = (-Vy*impact) + g*dt
 
-
-    group.add(50, 5, x - 5, y)
 
 
  

@@ -6,7 +6,7 @@ import pygame
     For representing bricks onto screen.
 """
 class Platform (pygame.sprite.Sprite):
-    def __init__(self, screen, width, height, x, y):
+    def __init__(self, screen, width, height, x, y, impact):
         self.__screen = screen
         self._width = width
         self._height = height
@@ -17,6 +17,7 @@ class Platform (pygame.sprite.Sprite):
         self.__H = h
         self.__isInGroup = False
         self.note = None
+        self.impact = impact
 
     def draw(self, camera_offset):
         """
@@ -63,9 +64,11 @@ class Platform (pygame.sprite.Sprite):
 
         if ((ballX + radius) >= platformX and ballX <= (platformX + platformW)) \
         and ((ballY + radius) >= platformY and ballY <= (platformY + platformH)):
-            return True
+            return self.impact
 
-        return False
+        return 'NaN'
+    
+
     
 
 
@@ -79,11 +82,11 @@ class PlatformGroup (pygame.sprite.Group):
         self._bricks = []
 
         
-    def add(self, width, height, x, y):
+    def add(self, width, height, x, y, impact):
         """
             adds a brick to this BrickWall (group)
         """
-        platform = Platform(self.__screen, width, height, x, y)
+        platform = Platform(self.__screen, width, height, x, y, impact)
         self._bricks.append(platform)
 
 
@@ -118,6 +121,9 @@ class PlatformGroup (pygame.sprite.Group):
             any of the bricks.
         """
         for brick in self._bricks:
-            if brick.collide(ball):
-                return True
-        return False
+            impact = brick.collide(ball)
+            # for bouncing off the bricks.
+            if  impact != 'NaN':
+                return impact
+            
+        return 'NaN'
